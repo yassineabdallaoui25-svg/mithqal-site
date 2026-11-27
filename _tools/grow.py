@@ -407,14 +407,29 @@ def patch_home(l):
     wr(p, s)
 
 
+def ensure_slip_scripts(s, l):
+    """The payslip block needs MQ_GROW, the engine and grow.js."""
+    if 'window.MQ_GROW=' not in s:
+        g = {'numLocale': LOCALE[l], 'currency': CUR[l], 't': {}}
+        s = s.replace('<script src="/assets/search.js" defer></script>', f'<script>window.MQ_GROW={json.dumps(g, ensure_ascii=False)}</script>\n<script src="/assets/search.js" defer></script>', 1)
+    if 'engine/payroll.js' not in s:
+        eng = ('' if 'engine/rules.js' in s else '<script src="/assets/engine/rules.js" defer></script>') + '<script src="/assets/engine/payroll.js" defer></script>'
+        s = s.replace('<script src="/assets/search.js" defer></script>', eng + '\n<script src="/assets/search.js" defer></script>', 1)
+    if 'assets/grow.js' not in s:
+        s = s.replace('<script src="/assets/search.js" defer></script>', '<script src="/assets/grow.js" defer></script>\n<script src="/assets/search.js" defer></script>', 1)
+    return s
+
+
 def patch_tools_index(l):
+    """Tools hub: the same payslip sheet + checker + other situations as the home page, instead of a card grid."""
     p = f'{l}/tools/index.html'
     s = rd(p)
-    cards = ''.join(
-        f"<a class='card app-card tool-card' href='/{l}{pp}'><span class=\"tool-ico\" aria-hidden=\"true\">{ic}</span>"
-        f"<div><h3>{E(TOOL_TXT[l][k][0])}</h3><p>{E(TOOL_TXT[l][k][1])}</p></div></a>" for k, pp, ic in TOOLS)
-    s = re.sub(r'<section class="sec paper"><div class="wrap"><div class="grid">.*?</div></div></section>',
-               f'<section class="sec paper"><div class="wrap"><div class="grid">{cards}</div></div></section>', s, count=1, flags=re.S)
+    k = SLIP[l]
+    block = (f'<!--mq-tools--><section class="sec slip-sec tools-hub"><div class="wrap"><div class="slip-grid">{slip_rows(l)}'
+             f'<div class="slip-side">{check_block(l)}{others_list(l, ("overtime", "severance", "pension"), k["other"])}</div></div></div></section><!--/mq-tools-->')
+    s = re.sub(r'<!--mq-tools-->.*?<!--/mq-tools-->', block, s, count=1, flags=re.S)
+    s = re.sub(r'<section class="sec paper"><div class="wrap"><div class="grid">.*?</div></div></section>', block, s, count=1, flags=re.S)
+    s = ensure_slip_scripts(s, l)
     wr(p, s)
 
 
