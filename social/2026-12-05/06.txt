@@ -1,0 +1,4 @@
+LE TEST DE SENSIBILITÉ
+−63 000
+de VAN si les flux tombent à 300 000
+Une baisse de 14 % des flux suffit à détruire la valeur. Le vrai risque est dans l’hypothèse de flux.

@@ -1,0 +1,8 @@
+EXEMPLE, EN M MAD
+De la VA à l’EBE
+Valeur ajoutée	4,0
+− Impôts et taxes	0,1
+− Charges de personnel	2,5
+= EBE	1,4
+− Dotations d’exploitation	0,6
+= Résultat d’exploitation	0,8

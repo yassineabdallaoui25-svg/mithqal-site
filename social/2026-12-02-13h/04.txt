@@ -1,0 +1,4 @@
+RATIO 3 · LIQUIDITÉ GÉNÉRALE
+Actif circulant ÷ passif circulant
+> 1
+Les actifs à court terme doivent couvrir les dettes à court terme. En dessous de 1, alerte.

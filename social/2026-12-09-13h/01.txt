@@ -1,0 +1,7 @@
+QUIZ · AMORTISSEMENT
+Camion acheté 300 000 MAD HT le 1er juillet 2026, linéaire sur 5 ans.
+A	Dotation 2026 : 60 000 MAD
+B	Dotation 2026 : 30 000 MAD
+C	Dotation 2026 : 25 000 MAD
+
+A, B ou C ? Réponds en commentaire avant de lire la légende.

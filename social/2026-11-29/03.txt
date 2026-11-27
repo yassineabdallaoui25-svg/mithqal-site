@@ -1,0 +1,8 @@
+L’EXEMPLE, EN MAD
+Les deux ont raison
+Solde relevé bancaire	152 000
+− Chèque émis non encaissé	15 000
+= Solde rapproché	137 000
+Solde comptable 5141	140 000
+− Frais bancaires non comptabilisés	3 000
+= Solde rapproché	137 000

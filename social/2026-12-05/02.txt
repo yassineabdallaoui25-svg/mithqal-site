@@ -1,0 +1,7 @@
+LES DONNÉES
+Le projet du DAF
+Coût de la machine	1 200 000
+Flux nets après impôt par an	350 000
+Durée du projet	5 ans
+Coût du capital	10 %
+Valeur résiduelle	0

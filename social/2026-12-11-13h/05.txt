@@ -1,0 +1,4 @@
+CLASSES 8 ET 0
+Le toit et la cave
+
+La classe 8 regroupe les résultats : elle couvre toute la maison. La classe 0 garde les engagements hors bilan, comme les cautions et les garanties.

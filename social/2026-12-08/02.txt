@@ -1,0 +1,4 @@
+ERREUR 1 / 5
+Mélanger HT et TTC
+
+Délai clients = créances TTC ÷ CA TTC × 360. Avec un CA hors taxes, le délai paraît 20 % plus long qu’en réalité.

@@ -1,0 +1,13 @@
+{
+ "voice": "siwis",
+ "_voice_options": "siwis = voix gratuite Piper (GitHub). elevenlabs = voix naturelle via vidIQ (crédits vidIQ ; il faut que assets.vidiq.com soit autorisé dans le réseau).",
+ "elevenlabs_voice_id": "Qrl71rx6Yg8RvyPYRGCQ",
+ "elevenlabs_voice_name": "Guillaume - Narrator",
+ "music": [],
+ "music_sources": [
+  "https://ai-music-tracks.s3.us-east-1.amazonaws.com/971e72de-1ae9-4c35-8cbb-f13663374f19/aabc54f3-ea0a-40b7-a00f-0d180e33d5ac.mp3",
+  "https://ai-music-tracks.s3.us-east-1.amazonaws.com/971e72de-1ae9-4c35-8cbb-f13663374f19/80c75253-db35-4ca0-bc74-d30c30c90523.mp3"
+ ],
+ "slots": ["13:00", "20:00"],
+ "targets_2026_12_31": {"followers": 500, "views_28d": 25000, "google_clicks_28d": 100}
+}

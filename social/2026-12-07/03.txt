@@ -1,0 +1,4 @@
+EXISTENCE ET EXHAUSTIVITÉ
+Deux tests en sens inverse
+
+Existence : on part du compte et on remonte à la pièce. Exhaustivité : on part de la pièce et on vérifie qu’elle est dans les comptes. Les dettes oubliées se cachent là.

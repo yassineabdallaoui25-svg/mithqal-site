@@ -1,0 +1,4 @@
+LE TRI
+14,1 %
+de TRI
+Le taux qui annule la VAN. Il dépasse le coût du capital de 10 % : le projet passe le test.

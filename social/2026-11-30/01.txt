@@ -1,0 +1,7 @@
+QUIZ · CLÔTURE
+Le stock final 2026 est surévalué de 100 000 MAD. Effet sur les résultats ?
+A	2026 : +100 000 · 2027 : −100 000
+B	Aucun effet sur le résultat
+C	2026 : −100 000 · 2027 : +100 000
+
+A, B ou C ? Réponds en commentaire avant de lire la légende.

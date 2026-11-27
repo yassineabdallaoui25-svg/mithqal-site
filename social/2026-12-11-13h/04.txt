@@ -1,0 +1,4 @@
+CLASSES 6 ET 7
+Le CPC : le film de l’année
+
+La classe 6 enregistre ce qui sort (achats, salaires, dotations). La classe 7 enregistre ce qui rentre (ventes, produits financiers). La différence, c’est le résultat.

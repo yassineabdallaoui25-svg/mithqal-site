@@ -1,0 +1,4 @@
+ERREUR 4 / 5
+Confondre EBE et trésorerie
+
+L’EBE ignore la variation du BFR. Une entreprise peut afficher un bel EBE et une trésorerie qui fond.

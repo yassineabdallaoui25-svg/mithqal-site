@@ -1,0 +1,16 @@
+LE TABLEAU DE FORMATION DES RÉSULTATS
+Du chiffre d’affaires au résultat net
+1
+Marge brute sur ventes en l’état
+2
+Production de l’exercice
+3
+Valeur ajoutée
+4
+Excédent brut d’exploitation (EBE)
+5
+Résultat d’exploitation
+6
+Résultat courant
+7
+Résultat net

@@ -1,0 +1,4 @@
+QUESTION 5 / 5
+FR, BFR, trésorerie : le lien ?
+
+Le FR finance le cycle, le BFR le consomme. Trésorerie nette = FR − BFR. Si tu sais l’expliquer avec un exemple, tu passes.

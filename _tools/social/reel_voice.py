@@ -6,6 +6,7 @@ Usage:
       [--music bed.mp3] slide1.png slide2.png ...
 
 Narration per slide, first match wins:
+  0. slideN.voice.mp3 next to the slide (ready-made narration, e.g. ElevenLabs), else
   1. slideN.say.txt next to the slide (hand-written spoken text),
   2. --hook for slide 1,
   3. a short spoken version built from slideN.txt (written by gen.js): heading + key figure,
@@ -110,7 +111,7 @@ def clip(src: Path, dst: Path, dur: float):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("out")
-    ap.add_argument("--voice", required=True)
+    ap.add_argument("--voice", default="fr-siwis-medium.onnx")
     ap.add_argument("--hook")
     ap.add_argument("--music")
     ap.add_argument("slides", nargs="+")
@@ -123,14 +124,20 @@ def main():
         for i, s in enumerate(map(Path, a.slides)):
             say = s.with_suffix(".say.txt")
             src_txt = s.with_suffix(".txt").read_text() if s.with_suffix(".txt").exists() else ""
-            if say.exists():
+            ext = next((s.with_suffix(e) for e in ('.voice.mp3', '.voice.wav') if s.with_suffix(e).exists()), None)
+            if ext:                                   # pre-made narration (e.g. ElevenLabs via vidIQ)
+                txt = '[audio] ' + ext.name
+            elif say.exists():
                 txt = speakable(say.read_text())
             elif i == 0 and a.hook and n > 1:
                 txt = speakable(a.hook)
             else:
                 txt = short_narration(src_txt, last=(i == n - 1))
             wav = tmp / f"v{i}.wav"
-            if txt:
+            if ext:
+                subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(ext), "-ac", "1", "-ar", "22050", str(wav)], check=True)
+                d = max(duration(wav) + PAD, MIN_SLIDE)
+            elif txt:
                 tts(txt, a.voice, wav, rng)
                 d = max(duration(wav) + PAD, MIN_SLIDE)
             else:

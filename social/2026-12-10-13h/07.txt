@@ -1,0 +1,4 @@
+COTISATION MINIMALE
+0,25 %
+Cotisation minimale du chiffre d’affaires
+Plancher de 3 000 MAD, due même en cas de perte.

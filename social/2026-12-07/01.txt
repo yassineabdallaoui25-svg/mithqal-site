@@ -1,0 +1,4 @@
+AUDIT
+L’auditeur ne refait pas tes comptes. Il teste 5 affirmations.
+
+Les assertions d’audit, en clair.

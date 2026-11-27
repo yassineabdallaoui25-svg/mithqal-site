@@ -1,0 +1,4 @@
+RATIO 4 · DÉLAI CLIENTS
+Clients TTC ÷ CA TTC × 360
+≤ 60 j
+Le délai légal par défaut de la loi 69-21. Chaque jour au-delà se finance par découvert.

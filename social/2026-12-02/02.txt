@@ -1,0 +1,7 @@
+L’EXEMPLE, EN MAD
+Atelier Nour, une PME fictive
+Chiffre d’affaires	2 000 000
+− Charges variables	1 200 000
+= Marge sur coût variable	800 000
+− Charges fixes	600 000
+= Résultat	200 000
