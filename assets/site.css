@@ -40,14 +40,15 @@ img{max-width:100%;height:auto}
 .brand{display:flex;align-items:center;gap:10px;color:var(--ink);text-decoration:none;font-weight:700;letter-spacing:.14em}
 .brand img{width:32px;height:32px;border-radius:9px}
 .nav{display:flex;gap:4px;margin-inline-start:auto;flex-wrap:wrap}
-.nav a{color:var(--ink-muted);text-decoration:none;font-size:.95rem;font-weight:500;padding:8px 10px;border-radius:10px}
+.nav a{color:var(--ink-muted);text-decoration:none;font-size:.93rem;font-weight:500;padding:8px 7px;border-radius:10px;white-space:nowrap}
+.nav{flex-wrap:nowrap}
 .nav a:hover,.nav a[aria-current=page]{color:var(--ink);background:var(--petrol)}
 .langs{display:flex;gap:2px;padding:3px;border-radius:999px;background:var(--petrol)}
 .langs a{min-width:38px;min-height:34px;display:grid;place-items:center;padding:0 10px;border-radius:999px;color:var(--ink);text-decoration:none;font-size:.82rem;font-weight:600}
 .langs a[aria-current=true]{background:var(--ink);color:var(--petrol)}
-@media (max-width:860px){.nav{display:none}.langs{margin-inline-start:auto}}
+@media (max-width:1080px){.nav{display:none}.langs{margin-inline-start:auto}}
 .mnav{display:none}
-@media (max-width:860px){.mnav{display:flex;gap:6px;overflow-x:auto;padding:8px 20px 10px;border-top:1px solid var(--line);scrollbar-width:none}.mnav a{flex:none;color:var(--ink-muted);text-decoration:none;font-size:.9rem;padding:6px 12px;border-radius:999px;border:1px solid var(--line)}.mnav a[aria-current=page]{color:var(--on-gold);background:var(--gold);border-color:var(--gold)}}
+@media (max-width:1080px){.mnav{display:flex;gap:6px;overflow-x:auto;padding:8px 20px 10px;border-top:1px solid var(--line);scrollbar-width:none}.mnav a{flex:none;color:var(--ink-muted);text-decoration:none;font-size:.9rem;padding:6px 12px;border-radius:999px;border:1px solid var(--line)}.mnav a[aria-current=page]{color:var(--on-gold);background:var(--gold);border-color:var(--gold)}}
 
 /* buttons */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:50px;padding:0 22px;border-radius:14px;border:0;background:var(--gold);color:var(--on-gold);font:600 1rem var(--f);text-decoration:none;cursor:pointer;transition:background .15s}
@@ -235,3 +236,23 @@ details.extras>summary{font-weight:600;color:var(--ink)}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .res tr.sub td{font-weight:600;border-bottom:2px solid var(--line-light)}
 .res .checks li{color:var(--text-dark)}.res .checks li.no{color:#7C5753}
+
+/* site search */
+.srch-btn{display:grid;place-items:center;width:40px;height:40px;margin-inline-start:6px;border:0;border-radius:10px;background:transparent;color:var(--ink-muted);cursor:pointer}
+.srch-btn:hover,.srch-btn[aria-expanded=true]{color:var(--ink);background:var(--petrol)}
+@media (max-width:1080px){.srch-btn{margin-inline-start:auto}.hd .langs{margin-inline-start:6px}}
+.srch{border-top:1px solid var(--line);background:var(--deep);padding-block:14px 18px}
+.hd .srch .wrap{display:block;min-height:0}
+.brand{flex:none}
+.srch-box input::-webkit-search-cancel-button{display:none}
+.srch-box{display:flex;gap:8px;align-items:center}
+.srch-box input{flex:1;font:500 1.1rem var(--f);min-height:52px;padding:0 16px;border-radius:14px;border:1.5px solid var(--line);background:var(--night);color:var(--ink)}
+.srch-box input:focus{border-color:var(--gold);outline:none}
+.srch-x{width:44px;height:44px;border:0;border-radius:12px;background:var(--petrol);color:var(--ink);font-size:1.5rem;line-height:1;cursor:pointer}
+.srch-n{margin:10px 2px 6px;font-size:.9rem;color:var(--ink-muted)}
+.srch-n:empty{display:none}
+.srch-r{list-style:none;margin:0;padding:0;max-height:min(60vh,440px);overflow-y:auto}
+.srch-r a{display:grid;gap:2px;padding:10px 12px;border-radius:12px;color:var(--ink);text-decoration:none}
+.srch-r li.on a,.srch-r a:hover,.srch-r a:focus-visible{background:var(--petrol)}
+.srch-t{font-weight:600}
+.srch-s{font-size:.9rem;color:var(--ink-muted);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
