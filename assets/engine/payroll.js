@@ -30,7 +30,9 @@
     year: 2026, sector: 'private', grossMonthly: 0,
     taxableAllowancesMonthly: 0, nonTaxableAllowancesMonthly: 0,
     dependants: 0, retirementMonthly: 0, otherWithholdingsMonthly: 0,
-    insuranceRate: 0 // complementary health insurance, employee share, % of gross (CGI art. 59-IV)
+    insuranceRate: 0, // complementary health insurance, employee share, % of gross (CGI art. 59-IV)
+    // allowances with legal exempt ceilings (CNSS arrêté 1314-25, DGI note 13/03/2017); excess becomes taxable salary
+    panierMonthly: 0, workedDays: null, transportMonthly: 0, transportZone: 'urban', representationMonthly: 0
   };
   const MAX_INSURANCE_RATE = 20;
   const MAX_MONTHLY = 10000000; // sanity guard against typos (10 M MAD / month)
@@ -40,7 +42,8 @@
     const errors = [];
     if (!RULES[input.year]) errors.push({ field: 'year', code: 'YEAR_UNSUPPORTED' });
     if (input.sector !== 'private') errors.push({ field: 'sector', code: 'SECTOR_UNSUPPORTED' });
-    ['grossMonthly', 'taxableAllowancesMonthly', 'nonTaxableAllowancesMonthly', 'retirementMonthly', 'otherWithholdingsMonthly'].forEach(f => {
+    ['grossMonthly', 'taxableAllowancesMonthly', 'nonTaxableAllowancesMonthly', 'retirementMonthly', 'otherWithholdingsMonthly',
+     'panierMonthly', 'transportMonthly', 'representationMonthly'].forEach(f => {
       const v = input[f];
       if (!isNum(v)) errors.push({ field: f, code: 'NOT_A_NUMBER' });
       else if (v < 0) errors.push({ field: f, code: 'NEGATIVE' });
@@ -49,6 +52,8 @@
     if (isNum(input.grossMonthly) && input.grossMonthly <= 0 && !errors.some(e => e.field === 'grossMonthly')) errors.push({ field: 'grossMonthly', code: 'REQUIRED' });
     if (!isNum(input.insuranceRate)) errors.push({ field: 'insuranceRate', code: 'NOT_A_NUMBER' });
     else if (input.insuranceRate < 0 || input.insuranceRate > MAX_INSURANCE_RATE) errors.push({ field: 'insuranceRate', code: 'INSURANCE_RATE_RANGE' });
+    if (input.workedDays != null && (!Number.isInteger(input.workedDays) || input.workedDays < 0 || input.workedDays > 31)) errors.push({ field: 'workedDays', code: 'INVALID_DAYS' });
+    if (input.transportZone !== 'urban' && input.transportZone !== 'outside') errors.push({ field: 'transportZone', code: 'INVALID_ZONE' });
     if (!Number.isInteger(input.dependants) || input.dependants < 0 || input.dependants > 20) errors.push({ field: 'dependants', code: 'INVALID_DEPENDANTS' });
     if (!errors.some(e => e.field === 'grossMonthly' || e.field === 'taxableAllowancesMonthly' || e.field === 'retirementMonthly') &&
         input.retirementMonthly > input.grossMonthly + input.taxableAllowancesMonthly)
@@ -93,8 +98,25 @@
     if (input.taxableAllowancesMonthly > 0) warnings.push('ALLOWANCES_ASSUMED_TAXABLE_AND_CONTRIBUTORY');
     if (input.nonTaxableAllowancesMonthly > 0) warnings.push('NON_TAXABLE_ALLOWANCES_USER_DECLARED');
 
-    // 2. gross remuneration
-    const gross = step('grossTaxableMonthly', input.grossMonthly + input.taxableAllowancesMonthly);
+    // 2. allowances with exempt ceilings: exempt part is paid on top of net, excess joins taxable gross
+    const A = rules.allowances;
+    const days = input.workedDays == null ? A.defaultWorkedDays : input.workedDays;
+    const split = (key, amount, cap) => {
+      const a = round2(amount), c = round2(cap), exempt = Math.min(a, c);
+      return { key, amount: a, cap: c, exempt: round2(exempt), excess: round2(a - exempt) };
+    };
+    const allowances = [
+      split('panier', input.panierMonthly, A.smigHourly * A.panierSmigPerDay * days),
+      split('transport', input.transportMonthly, A.transportMonthly[input.transportZone]),
+      split('representation', input.representationMonthly, input.grossMonthly * A.representationShareOfBase)
+    ].filter(x => x.amount > 0);
+    const allowExempt = round2(allowances.reduce((t, x) => t + x.exempt, 0));
+    const allowExcess = round2(allowances.reduce((t, x) => t + x.excess, 0));
+    if (allowances.length) warnings.push('ALLOWANCE_CONDITIONS_APPLY');
+    if (allowExcess > 0) warnings.push('ALLOWANCE_EXCESS_TAXED');
+
+    // gross remuneration (taxable and contributory)
+    const gross = step('grossTaxableMonthly', input.grossMonthly + input.taxableAllowancesMonthly + allowExcess);
 
     // 3–4. contribution bases and social contributions (monthly)
     const cnssBase = step('cnssBase', social.cnss.monthlyCeiling == null ? gross : Math.min(gross, social.cnss.monthlyCeiling));
@@ -123,7 +145,7 @@
     const ir = round2(step('incomeTaxMonthly', irA / 12));
 
     // 7–8. adjustments and net
-    const nonTaxable = round2(input.nonTaxableAllowancesMonthly);
+    const nonTaxable = round2(input.nonTaxableAllowancesMonthly + allowExempt);
     const otherW = round2(input.otherWithholdingsMonthly);
     const mandatory = round2(cnss + amo + ir);
     const optional = round2(retirement + insurance + otherW);
@@ -148,7 +170,13 @@
         ...(retirement ? [line('retirement', retirement, 'optional', { taxDeductible: true })] : []),
         ...(otherW ? [line('otherWithholdings', otherW, 'optional', { taxDeductible: false })] : [])
       ],
-      additions: nonTaxable ? [line('nonTaxableAllowances', nonTaxable, 'user')] : [],
+      additions: [
+        ...(input.nonTaxableAllowancesMonthly ? [line('nonTaxableAllowances', round2(input.nonTaxableAllowancesMonthly), 'user')] : []),
+        ...(allowExempt ? [line('exemptAllowances', allowExempt, 'legal')] : [])
+      ],
+      allowances: { items: allowances, exemptMonthly: allowExempt, excessMonthly: allowExcess, workedDays: days,
+                    sources: A.sources.map(k => Object.assign({ key: k }, SOURCES[k])) },
+      components: { baseMonthly: round2(input.grossMonthly), taxableBonusesMonthly: round2(input.taxableAllowancesMonthly), allowanceExcessMonthly: allowExcess },
       tax: {
         professionalExpensesAnnual: round2(fp.amount), professionalExpensesRate: fp.rate, professionalExpensesCapped: fp.capped,
         netTaxableIncomeAnnual: round2(taxableA), netTaxableIncomeMonthly: round2(taxableA / 12),
@@ -216,5 +244,5 @@
   }
 
   return Object.freeze({ calculate, grossFromNet, compare, simulate, validate, progressiveTax, professionalExpenses, round2,
-    SUPPORTED_YEARS: R.SUPPORTED_YEARS, ENGINE_VERSION: '0.1.0' });
+    SUPPORTED_YEARS: R.SUPPORTED_YEARS, ENGINE_VERSION: '0.2.0' });
 });

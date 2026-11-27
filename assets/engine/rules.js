@@ -97,6 +97,16 @@
       url: 'https://www.ilo.org/dyn/travail/docs/447/',
       note: 'Hourly wage = average monthly salary of the last 52 weeks / 191 hours.'
     },
+    'cnss-arrete-1314-25': {
+      title: 'Arrêté n° 1314-25 (décret n° 2-25-266), BO n° 7443 du 29/09/2025 — éléments de rémunération exonérés de cotisations CNSS : panier/repas 2 × SMIG horaire par jour travaillé ; transport domicile-travail 500 DH (périmètre urbain) ou 750 DH par mois ; représentation 10 % du salaire de base',
+      url: 'https://adala.justice.gov.ma',
+      note: 'Verified 27/11/2026. In force 1 October 2025. Panier only if no company canteen and no meal vouchers; transport only if the employer provides no transport or service car.'
+    },
+    'dgi-ns-2017': {
+      title: 'Note de service DGI du 13/03/2017 (CGI art. 57-1°) — plafonds IR des indemnités : panier 2 × SMIG horaire ; transport domicile-travail 500 / 750 DH par mois ; représentation 10 % du salaire de base (dirigeants et chefs de département)',
+      url: 'https://www.tax.gov.ma',
+      note: 'Verified 27/11/2026. Excess over each ceiling is taxable salary. Panier not cumulative with meal vouchers.'
+    },
     'cnss-rates': {
       title: 'CNSS — taux de cotisation (prestations sociales 4,48 % salarié plafonné à 6 000 MAD, dont IPE 0,19 %; AMO 2,26 % sans plafond)',
       url: 'https://www.cnss.ma',
@@ -113,6 +123,11 @@
       effectiveTo: '2026-12-31',
       verifiedOn: '2026-11-20',
       sector: { private: SOCIAL_CNSS_PRIVATE },
+      allowances: { // exempt ceilings, identical for CNSS (arrêté 1314-25) and IR (DGI note 13/03/2017)
+        smigHourly: 17.92, panierSmigPerDay: 2, defaultWorkedDays: 26,
+        transportMonthly: { urban: 500, outside: 750 }, representationShareOfBase: 0.10,
+        sources: ['cnss-arrete-1314-25', 'dgi-ns-2017', 'smig-2026']
+      },
       tax: {
         brackets: [ // annual net taxable income (RNI), marginal rates
           { upTo: 40000, rate: 0 },
@@ -142,6 +157,12 @@
       effectiveTo: '2027-12-31',
       verifiedOn: '2026-11-20',
       sector: { private: SOCIAL_CNSS_PRIVATE },
+      // SMIG 2027 not yet decreed: 2026 value carried forward (the draft only changes income tax).
+      allowances: {
+        smigHourly: 17.92, panierSmigPerDay: 2, defaultWorkedDays: 26,
+        transportMonthly: { urban: 500, outside: 750 }, representationShareOfBase: 0.10,
+        sources: ['cnss-arrete-1314-25', 'dgi-ns-2017', 'smig-2026']
+      },
       tax: {
         brackets: [
           { upTo: 60000, rate: 0 },
