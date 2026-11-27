@@ -185,5 +185,12 @@
     };
     gIn.addEventListener('input', () => { run(); if (q && q.value !== gIn.value) { q.value = gIn.value; q.dispatchEvent(new Event('input', { bubbles: true })); } });
     if (q) q.addEventListener('input', () => { if (gIn.value !== q.value) { gIn.value = q.value; run(); } });
+    // on tool pages: follow the gross typed in the page's own calculator (one way), or the ?b= of a shared link
+    const follow = id => { const el = document.getElementById(id); if (!el) return;
+      const take = () => { const m = document.querySelector('input[name=mode]:checked'); if (m && m.value === 'net') return; const v = num(el); if (v > 0 && String(v) !== gIn.value) { gIn.value = v; run(); } };
+      el.addEventListener('input', take); document.addEventListener('change', take); setTimeout(take, 0); };
+    ['amount', 'e-g', 'r-g', 'gross', 'p-g', 'y-amount', 'salary'].forEach(follow);
+    const qb = +new URLSearchParams(location.search).get('b');
+    if (qb > 0 && !q) { gIn.value = qb; run(); }
   }
 })();
