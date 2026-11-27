@@ -8,7 +8,7 @@ share box on the salary calculator, tools index, sitemap. Idempotent: run it aga
 """
 import glob, html, json, os, re, sys
 sys.path.insert(0, os.path.dirname(__file__))
-from grow_text import LANGS, TOOLS, TOOL_TXT, UI, PAGES, WHERE, PWA
+from grow_text import LANGS, TOOLS, TOOL_TXT, UI, PAGES, WHERE, PWA, SLIP
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 N = json.load(open(sys.argv[1]))
@@ -349,11 +349,24 @@ def patch_home(l):
     s = s.replace('</p>\n</div>\n<img class="hero-art"', '</p>\n' + form + '\n</div>\n<img class="hero-art"', 1) if form not in s else s
     if '<!--mq-qc-->' not in s:  # first run: lede is followed directly by the closing div
         s = re.sub(r'(<p class="lede">.*?</p>)\s*(</div>\s*<img class="hero-art")', lambda m: m.group(1) + '\n' + form + '\n' + m.group(2), s, count=1, flags=re.S)
-    # tools grid replaces the "don't want to install" callout
-    cards = ''.join(
-        f"<a class='card app-card tool-card' href='/{l}{pp}' data-track='home_tool'><span class=\"tool-ico\" aria-hidden=\"true\">{ic}</span>"
-        f"<div><h3>{E(TOOL_TXT[l][k][0])}</h3><p>{E(TOOL_TXT[l][k][1])}</p></div></a>" for k, pp, ic in TOOLS)
-    grid = f'<!--mq-htools--><section class="sec"><div class="wrap"><h2>{E(u["homeTools"])}</h2><p class="lede" style="margin-bottom:24px">{E(u["homeToolsLede"])}</p><div class="grid three">{cards}</div></div></section><!--/mq-htools-->'
+    # the calculators shown as a payslip whose lines update with the visitor's gross; the payslip checker beside it
+    k = SLIP[l]
+    e8 = next(x for x in N['employer'] if x['gross'] == 8000)
+    r8 = next(x for x in N['raise'] if x['from'] == 8000)
+    vals = {'net': money(e8['net'], l), 'y2027': money(N['net2027_8000'], l), 'employer': money(e8['cost'], l),
+            'raise': ('‎' if l == 'ar' else '') + '+' + money(r8['netGain'], l), 'smig': money(N['smig']['net'], l)}
+    hrefs = {'net': '/tools/salary-calculator/', 'y2027': '/2027/', 'employer': '/tools/employer-cost/', 'raise': '/tools/raise/', 'smig': '/smig-2026/'}
+    rows = ''.join(f'<li><a href="/{l}{hrefs[key]}" data-bl="{key}" data-track="home_slip" data-where="{key}"><span class="sl-l">{E(k["lines"][key])}</span><span class="sl-d" aria-hidden="true"></span><b class="sl-v num">{vals[key]}</b></a></li>' for key in ('net', 'y2027', 'employer', 'raise'))
+    rows += f'<li class="sl-ref"><a href="/{l}{hrefs["smig"]}" data-track="home_slip" data-where="smig"><span class="sl-l">{E(k["lines"]["smig"])}</span><span class="sl-d" aria-hidden="true"></span><b class="sl-v num">{vals["smig"]}</b></a></li>'
+    prev = ''.join(f'<li class="{c}"><span>{E(a)}</span><b class="num">{E(v)}</b><i>{"✓" if c == "ok" else "!"} {E(t)}</i></li>' for a, v, c, t in k['prev'])
+    others = ''.join(f'<li><a href="/{l}{pp}"><b>{E(TOOL_TXT[l][kk][0])}</b><span>{E(TOOL_TXT[l][kk][1])}</span></a></li>' for kk, pp, ic in TOOLS if kk in ('overtime', 'severance', 'pension'))
+    grid = (f'<!--mq-htools--><section class="sec slip-sec" id="outils"><div class="wrap"><div class="slip-head"><h2>{E(k["h2"])}</h2><p class="lede">{E(k["lede"])}</p></div>'
+            f'<div class="slip-grid"><div class="slip" id="slip"><div class="sl-top"><h3>{E(k["title"])}</h3>'
+            f'<label class="sl-in"><span>{E(k["for"])}</span><input id="sl-g" type="number" inputmode="decimal" min="0" step="100" value="8000" aria-label="{E(k["for"])} ({E(k["per"])})"><span>{E(k["per"])}</span></label></div>'
+            f'<ul class="sl-rows">{rows}</ul><p class="sl-tap">{E(k["tap"])}</p></div>'
+            f'<div class="slip-side"><a class="check" href="/{l}/tools/payslip-check/" data-track="home_check"><b class="ck-t">{E(k["feat"])}</b><span class="ck-p">{E(k["featText"])}</span>'
+            f'<ul class="ck-prev" aria-hidden="true">{prev}</ul><span class="btn">{E(k["featBtn"])}</span></a>'
+            f'<div class="others"><h3>{E(k["other"])}</h3><ul>{others}</ul></div></div></div></div></section><!--/mq-htools-->')
     s = re.sub(r'<!--mq-htools-->.*?<!--/mq-htools-->\n?', '', s, flags=re.S)
     s = re.sub(r'<section class="sec"><div class="wrap"><div class="callout"><h2>.*?</section>', grid, s, count=1, flags=re.S)
     if '<!--mq-htools-->' not in s:

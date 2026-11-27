@@ -166,4 +166,24 @@
     });
     pc0.addEventListener('input', run); pc0.addEventListener('change', run); run();
   }
+  // ---- home payslip: every line recomputed for the visitor's gross, links carry it to the full tool
+  const sl = document.getElementById('slip');
+  if (sl) {
+    const gIn = sl.querySelector('#sl-g'), q = document.getElementById('qc-g');
+    const base = {};
+    sl.querySelectorAll('[data-bl]').forEach(a => { base[a.dataset.bl] = a.getAttribute('href').split('?')[0]; });
+    const set = (key, v, qs) => { const a = sl.querySelector(`[data-bl="${key}"]`); if (!a) return; a.querySelector('.sl-v').textContent = v; a.href = base[key] + qs; };
+    const run = () => {
+      const g = num(gIn); if (!(g > 0)) return;
+      const r = net(g, 0), r7 = net(g, 0, 2027), up = net(r2(g * 1.1), 0);
+      if (!r) return;
+      sl.classList.remove('sl-pulse'); void sl.offsetWidth; sl.classList.add('sl-pulse');
+      set('net', dh(r.net.monthly), `?b=${g}&d=0`);
+      if (r7) set('y2027', dh(r7.net.monthly), `?b=${g}&d=0`);
+      set('employer', dh(employer(g).cost), `?b=${g}&d=0`);
+      if (up) set('raise', `${PLUS}${dh(r2(up.net.monthly - r.net.monthly))}`, `?b=${g}&v=10&m=pct`);
+    };
+    gIn.addEventListener('input', () => { run(); if (q && q.value !== gIn.value) { q.value = gIn.value; q.dispatchEvent(new Event('input', { bubbles: true })); } });
+    if (q) q.addEventListener('input', () => { if (gIn.value !== q.value) { gIn.value = q.value; run(); } });
+  }
 })();

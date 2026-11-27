@@ -18,4 +18,5 @@ out.smig = { hourly: 17.92, monthly: smig, net: sr.net.monthly, cnss: sr.deducti
 for (const [y, h, smag] of [['2021', 14.81, 76.70], ['2022', 15.55, 84.37], ['2023', 16.29, 88.58], ['2025', 17.10, 93.00], ['2026', 17.92, 97.44]]) out.history.push({ y, h, m: r2(h * 191), smag });
 // threshold trap: net just under / over 6 500 DH gross
 out.trap = { at6500: net(6500), at6510: net(6510), at6600: net(6600), at6400: net(6400) };
+out.net2027_8000 = net(8000, 0, 2027);
 console.log(JSON.stringify(out, null, 1));

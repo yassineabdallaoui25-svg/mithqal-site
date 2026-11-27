@@ -398,7 +398,7 @@ PAGES['payslip'] = {
     'fr': {
         'title': 'Vérifier sa fiche de paie au Maroc : CNSS, AMO, IR 2026 | MITHQAL',
         'desc': 'Recopie les lignes de ta fiche de paie : MITHQAL recalcule la CNSS, l’AMO, l’IR et le net selon les règles 2026, et te montre chaque écart avec sa cause probable. Gratuit, rien n’est envoyé.',
-        'h1': 'Ta fiche de paie est-elle juste ?',
+        'h1': 'Ta fiche de paie est-elle juste ?',
         'lede': 'Recopie quelques lignes de ton bulletin. On recalcule chaque retenue avec les règles 2026 et on te dit ligne par ligne si c’est bon, et sinon pourquoi.',
         'f': {'base': 'Ce qui est sur ta fiche', 'gross': 'Salaire brut imposable (DH)', 'dep': 'Personnes à charge déclarées', 'lines': 'Les retenues de ta fiche', 'cnss': 'Retenue CNSS (DH)', 'amo': 'Retenue AMO (DH)', 'ir': 'Impôt sur le revenu retenu (DH)', 'net': 'Net à payer (DH)', 'opt': 'Si ta fiche en a (facultatif)', 'cimr': 'Retraite complémentaire CIMR retenue (DH)', 'mut': 'Mutuelle retenue (DH)', 'exempt': 'Indemnités exonérées versées : transport, panier… (DH)', 'example': 'Remplir avec un exemple', 'empty': 'Laisse vide une ligne que tu ne veux pas vérifier.'},
         'r': {'ok': 'Correct', 'off': 'À vérifier', 'exp': 'attendu', 'got': 'sur ta fiche', 'diff': 'écart', 'allOk': 'Ta fiche de paie est cohérente avec les règles 2026.', 'some': 'ligne(s) à vérifier avec ton service paie.', 'none': 'Entre ton brut imposable et au moins une retenue pour lancer la vérification.', 'print': 'Imprimer ou enregistrer en PDF',
@@ -446,4 +446,26 @@ PAGES['payslip'] = {
         'src': ['قانون المالية رقم 50-25 لسنة 2026 والمدونة العامة للضرائب، المادتان 59 و73.', 'نسبة اشتراك الأجير في الضمان الاجتماعي (4,48٪، سقف 6.000 درهم) والتأمين عن المرض (2,26٪). تم التحقق في 27 نونبر 2026.'],
         'src_h': 'المصادر وتاريخ التحقق',
     },
+}
+
+# ---------------------------------------------------------------- pass 3: home "payslip" section
+SLIP = {
+    'fr': {'h2': 'Tout se calcule ici, sans rien installer', 'lede': 'Les mêmes règles que les applications, sources à l’appui. Ce que tu tapes ne quitte pas ton téléphone.',
+           'title': 'Ton salaire, ligne par ligne', 'for': 'Pour un brut de', 'per': 'DH par mois', 'tap': 'Touche une ligne pour le détail complet.',
+           'lines': {'net': 'Salaire net en 2026', 'y2027': 'Avec le projet de loi 2027', 'employer': 'Ce que paie ton employeur', 'raise': 'Si tu obtiens +10 %', 'smig': 'SMIG net 2026, pour comparer'},
+           'raiseSuffix': 'net', 'feat': 'Ta fiche de paie est-elle juste ?', 'featText': 'Recopie tes retenues : chaque ligne est vérifiée avec les règles 2026, et chaque écart est expliqué.',
+           'featBtn': 'Vérifier ma fiche de paie', 'prev': [['CNSS', '268,80', 'ok', 'Correct'], ['AMO', '203,40', 'ok', 'Correct'], ['IR', '+50,00', 'off', 'À vérifier']],
+           'other': 'Autres situations'},
+    'en': {'h2': 'Everything works right here, nothing to install', 'lede': 'Same rules as the apps, with sources. What you type never leaves your phone.',
+           'title': 'Your pay, line by line', 'for': 'For a gross of', 'per': 'MAD a month', 'tap': 'Tap a line for the full breakdown.',
+           'lines': {'net': 'Net salary in 2026', 'y2027': 'With the 2027 draft law', 'employer': 'What your employer pays', 'raise': 'If you get +10%', 'smig': 'Net minimum wage 2026, to compare'},
+           'raiseSuffix': 'net', 'feat': 'Is your payslip right?', 'featText': 'Copy your deductions: each line is checked against the 2026 rules, and every gap is explained.',
+           'featBtn': 'Check my payslip', 'prev': [['CNSS', '268.80', 'ok', 'Correct'], ['AMO', '203.40', 'ok', 'Correct'], ['Tax', '+50.00', 'off', 'Check this']],
+           'other': 'Other situations'},
+    'ar': {'h2': 'كل شيء يُحسب هنا، دون تثبيت أي شيء', 'lede': 'نفس قواعد التطبيقات، مع المصادر. ما تكتبه لا يغادر هاتفك.',
+           'title': 'راتبك، سطرًا بسطر', 'for': 'لأجر إجمالي قدره', 'per': 'درهم في الشهر', 'tap': 'اضغط على سطر للاطلاع على التفاصيل الكاملة.',
+           'lines': {'net': 'الراتب الصافي في 2026', 'y2027': 'مع مشروع قانون 2027', 'employer': 'ما يدفعه مشغّلك', 'raise': 'إذا حصلت على +10٪', 'smig': 'الحد الأدنى الصافي 2026، للمقارنة'},
+           'raiseSuffix': 'صافي', 'feat': 'هل ورقة أجرك صحيحة؟', 'featText': 'انقل اقتطاعاتك: يُتحقق من كل سطر وفق قواعد 2026، ويُشرح كل فرق.',
+           'featBtn': 'تحقق من ورقة أجري', 'prev': [['الضمان', '268,80', 'ok', 'صحيح'], ['التأمين', '203,40', 'ok', 'صحيح'], ['الضريبة', '‎+50,00', 'off', 'يجب التحقق']],
+           'other': 'حالات أخرى'},
 }
