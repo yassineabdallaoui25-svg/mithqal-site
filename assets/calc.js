@@ -72,6 +72,14 @@
       }
     }
 
+    // what the employer pays in total (2026 employer rates: 8.98 % capped at 6 000 DH, 6.40 % + 4.11 % + 1.60 % uncapped)
+    let emp = '';
+    if (L.emp) {
+      const cap = Math.min(g, 6000), charges = S.round2(cap * 0.0898) + S.round2(g * 0.064) + S.round2(g * 0.0411) + S.round2(g * 0.016);
+      const cost = S.round2(g + exempt + charges);
+      emp = `<p class="cmp">${esc(L.emp.a)} <b class="num">${dh(cost)}</b> ${esc(L.emp.b)} <a href="${esc(L.emp.href)}?b=${S.round2(g)}&amp;d=${dependants}">${esc(L.emp.more)}</a></p>`;
+    }
+
     const netLabel = anyExtra ? (L2.netPay || L.net) : L.net;
     const headline = mode === 'net'
       ? `<div class="k">${esc(anyExtra ? (L.baseNeeded || L.gross) : L.gross)}</div><div class="big num">${dh(base)}</div><div class="muted num">${esc(netLabel)} : ${dh(r.net.monthly)}</div>`
@@ -111,6 +119,7 @@
       </tbody></table>
       ${allow}
       ${cmp}
+      ${emp}
       <details><summary>${esc(L.breakdown)}</summary><table><tbody>
         <tr><td>${esc(L.lines.fp)}</td><td class="num">${dh(r.tax.professionalExpensesAnnual)} (${pct.format(r.tax.professionalExpensesRate)})</td></tr>
         <tr><td>${esc(L.lines.taxable)}</td><td class="num">${dh(r.tax.netTaxableIncomeAnnual)}</td></tr>
