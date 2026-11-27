@@ -1,0 +1,66 @@
+/* MITHQAL SALARY — design tokens.
+   Forked from MITHQAL tokens.css (same 14 brand colours, same contrast discipline).
+   Added: Readex Pro (OFL, Arabic + Latin, one family for both scripts) and a SEMANTIC layer
+   (--bg, --text, --accent…) so the components never name a brand colour directly and the
+   light / dark / system themes are a single switch on <html data-theme>. */
+
+@font-face{font-family:"Readex Pro";font-style:normal;font-weight:160 700;font-display:swap;
+  src:url(../../assets/fonts/readex-pro-arabic-wght-normal.woff2) format("woff2");
+  unicode-range:U+0600-06FF,U+0750-077F,U+0870-088E,U+0890-0891,U+0897-08E1,U+08E3-08FF,U+200C-200E,U+2010-2011,U+204F,U+2E41,U+FB50-FDFF,U+FE70-FE74,U+FE76-FEFC}
+@font-face{font-family:"Readex Pro";font-style:normal;font-weight:160 700;font-display:swap;
+  src:url(../../assets/fonts/readex-pro-latin-ext-wght-normal.woff2) format("woff2");
+  unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:"Readex Pro";font-style:normal;font-weight:160 700;font-display:swap;
+  src:url(../../assets/fonts/readex-pro-latin-wght-normal.woff2) format("woff2");
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+
+:root{
+  /* ---- the 14 MITHQAL brand tokens (unchanged) ---- */
+  --mq-night:#04191B; --mq-deep:#072427; --mq-petrol:#0F3B3F; --mq-petrol-2:#164A4F;
+  --mq-ink:#EAF3F2; --mq-ink-muted:#A3C0BD;
+  --mq-gold:#D4AA55; --mq-gold-soft:#EBCB8B; --mq-on-gold:#241703;
+  --mq-emerald:#2FA37F; --mq-teal:#4FC0B4; --mq-up:#6FD9A8; --mq-down:#FF9A8F;
+  /* light-band tones, precomputed (no color-mix needed → works on older Android WebViews) */
+  --mq-paper:#E0ECEB; --mq-sunken:#D6E5E3; --mq-text-dark-muted:#475F5F; --mq-line-light:#CADCDA;
+  --mq-up-dark:#1E6C57; --mq-down-dark:#7C5753; --mq-gold-dark:#755B29;
+
+  /* ---- type, space, shape, motion ---- */
+  --f:"Readex Pro",system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans Arabic",sans-serif;
+  --ease:cubic-bezier(.2,.7,.2,1); --t-state:120ms; --t-enter:220ms;
+  --r-sm:10px; --r-card:16px; --r-hero:22px;
+  --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:24px; --s6:32px;
+  --nav-h:68px;
+
+  /* ---- semantic layer: DARK (default) ---- */
+  --bg:var(--mq-night); --surface:var(--mq-petrol); --surface-2:var(--mq-deep); --surface-hover:var(--mq-petrol-2);
+  --text:var(--mq-ink); --text-muted:var(--mq-ink-muted);
+  --line:rgba(234,243,242,.14);
+  --accent:var(--mq-gold); --on-accent:var(--mq-on-gold); --accent-text:var(--mq-gold);
+  --ornament:var(--mq-gold-soft); --ornament-opacity:.10;
+  --good:var(--mq-up); --bad:var(--mq-down); --link:var(--mq-teal);
+  --focus:var(--mq-gold-soft);
+  color-scheme:dark;
+}
+
+/* ---- LIGHT ---- */
+:root[data-theme="light"]{
+  --bg:var(--mq-paper); --surface:#F3F8F7; --surface-2:var(--mq-sunken); --surface-hover:var(--mq-line-light);
+  --text:var(--mq-night); --text-muted:var(--mq-text-dark-muted);
+  --line:rgba(4,25,27,.14);
+  --accent:var(--mq-gold); --on-accent:var(--mq-on-gold); --accent-text:var(--mq-gold-dark);
+  --ornament:var(--mq-gold-dark); --ornament-opacity:.12;
+  --good:var(--mq-up-dark); --bad:var(--mq-down-dark); --link:#1E6C67;
+  --focus:var(--mq-gold-dark);
+  color-scheme:light;
+}
+@media (prefers-color-scheme:light){
+  :root[data-theme="system"]{
+    --bg:var(--mq-paper); --surface:#F3F8F7; --surface-2:var(--mq-sunken); --surface-hover:var(--mq-line-light);
+    --text:var(--mq-night); --text-muted:var(--mq-text-dark-muted);
+    --line:rgba(4,25,27,.14);
+    --accent-text:var(--mq-gold-dark); --ornament:var(--mq-gold-dark); --ornament-opacity:.12;
+    --good:var(--mq-up-dark); --bad:var(--mq-down-dark); --link:#1E6C67; --focus:var(--mq-gold-dark);
+    color-scheme:light;
+  }
+}
+@media (prefers-reduced-motion:reduce){:root{--t-state:0ms;--t-enter:0ms}}
