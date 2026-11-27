@@ -445,6 +445,37 @@ def patch_sitemap():
     wr(p, s)
 
 
+# ------------------------------------------------------------------ QNACH hidden for now (27/11/2026): focus on Salary and Budget.
+# Its pages stay online (the Play listing points to its privacy policy) but are unlinked, noindex and out of sitemap/search.
+HOME_LEDE = {
+    'fr': ('Trois applications et des calculateurs gratuits pour les salariés, les familles et les petits commerçants au Maroc.', 'Deux applications et des calculateurs gratuits pour les salariés et les familles au Maroc.'),
+    'en': ('Three apps and free calculators for employees, families and small shopkeepers in Morocco.', 'Two apps and free calculators for employees and families in Morocco.'),
+    'ar': ('ثلاثة تطبيقات وحاسبات مجانية للأجراء والأسر وصغار التجار في المغرب.', 'تطبيقان وحاسبات مجانية للأجراء والأسر في المغرب.'),
+}
+
+
+def hide_qnach():
+    for f in glob.glob(os.path.join(ROOT, '*', '**', 'index.html'), recursive=True) + [os.path.join(ROOT, 'salary', 'privacy', 'index.html')]:
+        if not os.path.exists(f):
+            continue
+        rel = os.path.relpath(f, ROOT); l = rel.split('/')[0]
+        s = open(f, encoding='utf-8').read(); o = s
+        s = re.sub(r"<a(?: aria-current='page')? href='/(?:fr|en|ar)/qnach/'>QNACH</a>", '', s)
+        s = re.sub(r"<li><a href='/(?:fr|en|ar)/qnach/(?:privacy/)?'>[^<]*</a></li>", '', s)
+        s = re.sub(r"<li><a href='/(?:fr|en|ar)/qnach/'><img src=\"[^\"]*qnach\.svg\".*?</a></li>", '', s, flags=re.S)
+        s = re.sub(r"<li><a href='/(?:fr|en|ar)/qnach/'><b>.*?</a></li>", '', s, flags=re.S)
+        if l in HOME_LEDE:
+            s = s.replace(*HOME_LEDE[l])
+        if '/qnach/' in '/' + rel and '<meta name="robots"' not in s:
+            s = s.replace('<meta charset="utf-8">', '<meta charset="utf-8"><meta name="robots" content="noindex">', 1)
+        if s != o:
+            open(f, 'w', encoding='utf-8').write(s)
+    sm = rd('sitemap.xml')
+    sm2 = re.sub(r'<url><loc>https://mithqal\.ma/(?:fr|en|ar)/qnach/[^<]*</loc>.*?</url>\s*', '', sm, flags=re.S)
+    if sm2 != sm:
+        wr('sitemap.xml', sm2)
+
+
 if __name__ == '__main__':
     for l in LANGS:
         page_employer(l); page_raise(l); page_smig(l); page_beta(l); page_payslip(l)
@@ -454,4 +485,5 @@ if __name__ == '__main__':
     patch_sitemap()
     manifests()
     pwa_head_all()
+    hide_qnach()
     print('ok')

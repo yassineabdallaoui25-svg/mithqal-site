@@ -11,6 +11,8 @@ def text(s):
 for L in ('fr', 'en', 'ar'):
     pages = []
     for f in sorted(glob.glob(f'{L}/**/index.html', recursive=True)):
+        if '/qnach/' in f:  # QNACH hidden for now
+            continue
         s = open(f, encoding='utf-8').read()
         url = '/' + f[:-len('index.html')]
         title = text(re.search(r'<title>(.*?)</title>', s, re.S).group(1))
