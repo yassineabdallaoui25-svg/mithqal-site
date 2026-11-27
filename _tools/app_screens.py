@@ -1,21 +1,22 @@
 # -*- coding: utf-8 -*-
-"""MITHQAL Salary screenshots on the website, from the app itself (version 1.8.0, 27/11/2026).
+"""App screenshots on the website, inside a realistic phone drawn in CSS (.device in site.css).
 
-    python3 _tools/salary_screens.py SHOTS_DIR
-SHOTS_DIR holds <lang>-NN-<name>.png at 1080x1920 (lang = fr, en, da), captured from the app's web bundle.
-Writes assets/screens/salary/<site-lang>/NN-<width>.(avif|webp) at 270/405/540/720 px and rewrites the hero
-and the "app in pictures" strip of /fr|en|ar/salary/ with <picture> (AVIF first, WebP fallback), srcset and sizes.
+    python3 _tools/app_screens.py APP SHOTS_DIR VERSION      (APP = salary | budget)
+SHOTS_DIR holds <lang>-NN-<name>.png full phone screens at 1080x2400 (status bar + app + gesture bar; lang = fr, en, da),
+captured from the app's web bundle. Writes assets/screens/APP/<site-lang>/NN-<width>.(avif|webp) and rewrites the hero
+and the "app in pictures" strip of /fr|en|ar/APP/ with <picture> (AVIF first, WebP fallback), srcset and sizes.
 The Arabic site shows the app in Darija."""
 import glob, html, os, re, sys
 from PIL import Image
 
-SRC = sys.argv[1]
+APP, SRC, VERSION = sys.argv[1], sys.argv[2], sys.argv[3]
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 APP_LANG = {'fr': 'fr', 'en': 'en', 'ar': 'da'}
 WIDTHS = (270, 405, 540)  # shown in the page; 720 px WebP only as the tap-to-enlarge target
 E = html.escape
 
-ALT = {
+ALT = {}
+ALT['salary'] = {
     'fr': ['Accueil : où part ton salaire, en piles de pièces pour le net, la CNSS, l’AMO et l’IR',
            'Calcul : 8 903,64 MAD net par mois pour 10 000 MAD brut',
            'Augmentation : +759,18 MAD net par mois pour 1 000 MAD brut de plus',
@@ -41,17 +42,18 @@ ALT = {
            'شهري: الراتب والادخار والضمان الاجتماعي وورقة الأجر في مكان واحد',
            'تعلّم: ورقة أجرك مشروحة سطرًا بسطر'],
 }
-CAPTION = {
-    'fr': ('Captures d’écran réelles de la version 1.8.0.', 'Fais défiler pour voir les autres écrans.', 'Écran d’accueil de MITHQAL Salary'),
-    'en': ('Real screenshots of version 1.8.0.', 'Scroll to see more screens.', 'MITHQAL Salary home screen'),
-    'ar': ('لقطات شاشة حقيقية من الإصدار 1.8.0، بالدارجة.', 'مرّر لمشاهدة باقي الشاشات.', 'الشاشة الرئيسية لتطبيق MITHQAL Salary'),
+CAPTION = {}
+CAPTION['salary'] = {
+    'fr': ('Captures d’écran réelles de la version {v}.', 'Fais défiler pour voir les autres écrans.', 'Écran d’accueil de MITHQAL Salary'),
+    'en': ('Real screenshots of version {v}.', 'Scroll to see more screens.', 'MITHQAL Salary home screen'),
+    'ar': ('لقطات شاشة حقيقية من الإصدار {v}، بالدارجة.', 'مرّر لمشاهدة باقي الشاشات.', 'الشاشة الرئيسية لتطبيق MITHQAL Salary'),
 }
 
 
 def encode():
     total = 0
     for site, app in APP_LANG.items():
-        out = os.path.join(ROOT, 'assets', 'screens', 'salary', site)
+        out = os.path.join(ROOT, 'assets', 'screens', APP, site)
         os.makedirs(out, exist_ok=True)
         for f in sorted(glob.glob(os.path.join(SRC, f'{app}-*.png'))):
             n = os.path.basename(f).split('-')[1]
@@ -68,26 +70,27 @@ def encode():
 
 
 def picture(site, n, sizes, alt, eager=False):
-    base = f'/assets/screens/salary/{site}/{n}'
+    base = f'/assets/screens/{APP}/{site}/{n}'
     av = ', '.join(f'{base}-{w}.avif {w}w' for w in WIDTHS)
     wp = ', '.join(f'{base}-{w}.webp {w}w' for w in WIDTHS)
     load = 'fetchpriority="high" decoding="async"' if eager else 'loading="lazy" decoding="async"'
     return (f'<picture><source type="image/avif" srcset="{av}" sizes="{sizes}">'
-            f'<img src="{base}-540.webp" srcset="{wp}" sizes="{sizes}" alt="{E(alt)}" width="540" height="960" {load}></picture>')
+            f'<img src="{base}-540.webp" srcset="{wp}" sizes="{sizes}" alt="{E(alt)}" width="540" height="1200" {load}></picture>')
 
 
 def pages():
     for site in APP_LANG:
-        p = os.path.join(ROOT, site, 'salary', 'index.html')
+        p = os.path.join(ROOT, site, APP, 'index.html')
         s = open(p, encoding='utf-8').read()
-        n_shots = len(glob.glob(os.path.join(ROOT, 'assets', 'screens', 'salary', site, '*-540.webp')))
-        cap, hint, hero_alt = CAPTION[site]
+        n_shots = len(glob.glob(os.path.join(ROOT, 'assets', 'screens', APP, site, '*-540.webp')))
+        cap, hint, hero_alt = CAPTION[APP][site]
+        cap = cap.format(v=VERSION)
         # hero: the home screen in a phone frame
-        s = re.sub(r'<figure class="phone hero-phone">.*?</figure>',
-                   f'<figure class="phone hero-phone">{picture(site, "01", "(max-width:820px) 240px, 280px", hero_alt, eager=True)}</figure>', s, count=1, flags=re.S)
+        s = re.sub(r'<figure class="(?:phone|plain|device) hero-phone">.*?</figure>',
+                   f'<figure class="device hero-phone"><span class="dv-screen">{picture(site, "01", "(max-width:820px) 240px, 280px", hero_alt, eager=True)}</span></figure>', s, count=1, flags=re.S)
         # strip of all screens, each linking to its large version
-        items = ''.join(f'<li><a href="/assets/screens/salary/{site}/{i:02d}-720.webp" class="phone">'
-                        f'{picture(site, f"{i:02d}", "(max-width:600px) 62vw, 220px", ALT[site][i - 1])}</a></li>' for i in range(1, n_shots + 1))
+        items = ''.join(f'<li><a href="/assets/screens/{APP}/{site}/{i:02d}-720.webp" class="device"><span class="dv-screen">'
+                        f'{picture(site, f"{i:02d}", "(max-width:600px) 62vw, 220px", ALT[APP][site][i - 1])}</span></a></li>' for i in range(1, n_shots + 1))
         s = re.sub(r'(<ul class="shots"[^>]*>).*?(</ul>)', lambda m: m.group(1) + items + m.group(2), s, count=1, flags=re.S)
         s = re.sub(r'(<section class="sec tight shots-sec"><div class="wrap"><h2>[^<]*</h2><p class="muted">).*?(<span class="shots-hint">)[^<]*(</span></p>)',
                    lambda m: m.group(1) + E(cap) + ' ' + m.group(2) + E(hint) + m.group(3), s, count=1, flags=re.S)
