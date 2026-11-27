@@ -73,11 +73,22 @@
     }
 
     // what the employer pays in total (2026 employer rates: 8.98 % capped at 6 000 DH, 6.40 % + 4.11 % + 1.60 % uncapped)
+    const capB = Math.min(g, 6000), charges = S.round2(S.round2(capB * 0.0898) + S.round2(g * 0.064) + S.round2(g * 0.0411) + S.round2(g * 0.016));
+    const cost = S.round2(g + exempt + charges);
     let emp = '';
-    if (L.emp) {
-      const cap = Math.min(g, 6000), charges = S.round2(cap * 0.0898) + S.round2(g * 0.064) + S.round2(g * 0.0411) + S.round2(g * 0.016);
-      const cost = S.round2(g + exempt + charges);
-      emp = `<p class="cmp">${esc(L.emp.a)} <b class="num">${dh(cost)}</b> ${esc(L.emp.b)} <a href="${esc(L.emp.href)}?b=${S.round2(g)}&amp;d=${dependants}">${esc(L.emp.more)}</a></p>`;
+    if (L.emp) emp = `<p class="cmp">${esc(L.emp.a)} <b class="num">${dh(cost)}</b> ${esc(L.emp.b)} <a href="${esc(L.emp.href)}?b=${S.round2(g)}&amp;d=${dependants}">${esc(L.emp.more)}</a></p>`;
+
+    // "out of 100 DH your employer pays": one tall segmented bar (net · CNSS · IR · AMO · employer charges)
+    let where = '';
+    const WH = L.where;
+    if (WH && cost > 0) {
+      const one = new Intl.NumberFormat(L.numLocale, { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+      const parts = [['net', r.net.monthly], ['cnss', d.cnss], ['ir', d.incomeTax], ['amo', d.amo], ['emp', charges]].filter(p => p[1] > 0)
+        .map(([k, v]) => ({ k, v, p: v / cost * 100 }));
+      const blocks = parts.map(x => `<span class="wb wb-${x.k}" style="flex-grow:${x.p.toFixed(3)}" title="${esc(WH[x.k])} : ${one.format(x.p)} (${dh(x.v)})">${x.p >= 9 ? `<i>${one.format(x.p)}</i>` : ''}</span>`).join('');
+      const legend = parts.map(x => `<span><i class="wb-${x.k}"></i>${esc(WH[x.k])}${x.p < 9 ? ` <b class="num">${one.format(x.p)}</b>` : ''}</span>`).join('');
+      const label = parts.map(x => `${WH[x.k]} ${one.format(x.p)}`).join(', ');
+      where = `<div class="where"><p class="wt">${esc(WH.title)}</p><div class="wbar" role="img" aria-label="${esc(WH.aria)} : ${esc(label)}">${blocks}</div><div class="wlegend">${legend}</div></div>`;
     }
 
     const netLabel = anyExtra ? (L2.netPay || L.net) : L.net;
@@ -108,8 +119,7 @@
       ${r.isEstimate ? `<p class="warn">${esc(L.draftBanner)}</p>` : ''}
       ${headline}
       ${note}
-      <div class="bar" aria-hidden="true"><i class="c-net" style="width:${w(r.net.monthly)}"></i><i class="c-cnss" style="width:${w(d.cnss)}"></i><i class="c-amo" style="width:${w(d.amo)}"></i><i class="c-ir" style="width:${w(d.incomeTax)}"></i></div>
-      <div class="legend"><span><i class="c-net"></i>${esc(netLabel)}</span><span><i class="c-cnss"></i>CNSS</span><span><i class="c-amo"></i>AMO</span><span><i class="c-ir"></i>IR</span></div>
+      ${where}
       <table><tbody>
         ${top}
         <tr><td>${esc(L.lines.cnss)}</td><td class="num">− ${dh(d.cnss)}</td></tr>

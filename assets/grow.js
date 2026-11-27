@@ -120,4 +120,50 @@
     };
     rr.addEventListener('input', run); rr.addEventListener('change', run); run();
   }
+  // ---- payslip checker: recompute each deduction with the engine and compare with what the payslip says
+  const pc0 = document.getElementById('payslip');
+  if (pc0) {
+    const R = T.r || {}, L = T.labels || {}, W = R.why || {};
+    const $ = id => pc0.querySelector('#' + id), out = pc0.querySelector('#result');
+    const opt = el => { if (!el || String(el.value).trim() === '') return null; const v = parseFloat(String(el.value).replace(/\s/g, '').replace(',', '.')); return isFinite(v) && v >= 0 ? v : null; };
+    let used = false;
+    const run = () => {
+      const g = num($('p-g')), dep = +$('p-d').value || 0;
+      const cimr = opt($('p-cimr')) || 0, mut = opt($('p-mut')) || 0, ex = opt($('p-ex')) || 0;
+      const got = { cnss: opt($('p-cnss')), amo: opt($('p-amo')), ir: opt($('p-ir')), net: opt($('p-net')) };
+      if (!(g > 0) || Object.values(got).every(v => v === null)) { out.innerHTML = `<p class="muted">${esc(R.none)}</p>`; return; }
+      let r = S.calculate({ grossMonthly: g, dependants: dep, year: 2026, retirementMonthly: Math.min(cimr, g), insuranceRate: mut > 0 ? Math.min(mut / g * 100, 10) : 0 });
+      if (!r.ok) r = S.calculate({ grossMonthly: g, dependants: dep, year: 2026 });
+      if (!r.ok) { out.innerHTML = ''; return; }
+      const d = Object.fromEntries(r.deductions.map(x => [x.key, x.monthly]));
+      const exp = { cnss: d.cnss || 0, amo: d.amo || 0, ir: d.incomeTax || 0, net: r2(r.net.monthly + ex) };
+      const tol = { cnss: 1, amo: 1, ir: 3, net: 3 };
+      const rows = [], bad = [];
+      ['cnss', 'amo', 'ir', 'net'].forEach(k => {
+        if (got[k] === null) return;
+        const diff = r2(got[k] - exp[k]), ok = Math.abs(diff) <= tol[k];
+        let why = '';
+        if (!ok) {
+          why = k === 'cnss' ? (diff > 0 ? W.cnss_hi : W.cnss_lo) : k === 'ir' ? (diff > 0 ? W.ir_hi : W.ir_lo) : k === 'amo' ? W.amo : W.net;
+          bad.push(k);
+        }
+        rows.push(`<li class="${ok ? 'ok' : 'off'}"><div class="pl-h"><span class="pl-s">${ok ? '✓' : '!'} ${esc(ok ? R.ok : R.off)}</span><b>${esc(L[k])}</b></div>
+          <div class="pl-n"><span>${esc(R.got)} <b class="num">${dh(got[k])}</b></span><span>${esc(R.exp)} <b class="num">${dh(exp[k])}</b></span>${ok ? '' : `<span>${esc(R.diff)} <b class="num">${diff > 0 ? PLUS : MINUS} ${dh(Math.abs(diff))}</b></span>`}</div>
+          ${why ? `<p class="pl-w">${esc(why)}</p>` : ''}</li>`);
+      });
+      const head = bad.length ? `<p class="pl-v off">! ${bad.length} ${esc(R.some)}</p>` : `<p class="pl-v ok">✓ ${esc(R.allOk)}</p>`;
+      out.innerHTML = `${head}<ul class="pl">${rows.join('')}</ul><p class="src">${esc(R.tol)}</p><button type="button" class="btn ghost pl-print" onclick="window.print()">${esc(R.print)}</button>`;
+      if (!used) { used = true; track('calc_used', { tool: 'payslip', issues: bad.length }); }
+    };
+    const ex = pc0.querySelector('[data-example]');
+    if (ex) ex.addEventListener('click', () => {
+      // a typical mistake: one dependant not taken into account by the employer
+      const g = 9000, r = S.calculate({ grossMonthly: g, dependants: 1, year: 2026 }), d = Object.fromEntries(r.deductions.map(x => [x.key, x.monthly]));
+      $('p-g').value = g; $('p-d').value = 1; $('p-cnss').value = d.cnss; $('p-amo').value = d.amo;
+      $('p-ir').value = r2(d.incomeTax + 50); $('p-net').value = r2(r.net.monthly - 50);
+      ['p-cimr', 'p-mut', 'p-ex'].forEach(id => { $(id).value = ''; });
+      run(); out.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+    pc0.addEventListener('input', run); pc0.addEventListener('change', run); run();
+  }
 })();

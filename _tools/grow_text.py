@@ -368,3 +368,82 @@ PAGES['beta'] = {
         'webBtn': 'افتح حاسبة الراتب',
     },
 }
+
+# ---------------------------------------------------------------- pass 2 (27/11/2026 evening): payslip checker, PWA, result visual
+TOOLS.insert(1, ('payslip', '/tools/payslip-check/', '✓'))
+TOOL_TXT['fr']['payslip'] = ('Vérifier ma fiche de paie', 'CNSS, AMO, IR et net : chaque ligne contrôlée.')
+TOOL_TXT['en']['payslip'] = ('Check my payslip', 'CNSS, AMO, income tax and net pay, line by line.')
+TOOL_TXT['ar']['payslip'] = ('تحقق من ورقة أجرك', 'الضمان الاجتماعي والتأمين عن المرض والضريبة والصافي، سطرًا بسطر.')
+
+WHERE = {
+    'fr': {'title': 'Sur 100 DH payés par ton employeur', 'net': 'Pour toi (net)', 'cnss': 'CNSS', 'ir': 'Impôt (IR)', 'amo': 'AMO', 'emp': 'Charges patronales', 'aria': 'Répartition de 100 DH de coût employeur'},
+    'en': {'title': 'Out of every 100 MAD your employer pays', 'net': 'For you (net)', 'cnss': 'CNSS', 'ir': 'Income tax', 'amo': 'AMO', 'emp': 'Employer contributions', 'aria': 'Split of 100 MAD of employer cost'},
+    'ar': {'title': 'من كل 100 درهم يدفعها مشغّلك', 'net': 'لك (صافي)', 'cnss': 'الضمان الاجتماعي', 'ir': 'الضريبة على الدخل', 'amo': 'التأمين عن المرض', 'emp': 'تحملات المشغّل', 'aria': 'توزيع 100 درهم من تكلفة المشغّل'},
+}
+
+PWA = {
+    'fr': {'name': 'MITHQAL : salaire net et calculateurs Maroc', 'short': 'MITHQAL', 'desc': 'Salaire net, coût employeur, augmentation, SMIG : les calculateurs MITHQAL, même hors connexion.',
+           'btn': 'Installer MITHQAL sur mon téléphone', 'lede': 'Gratuit, sans compte, marche hors connexion. En attendant la sortie des apps sur Google Play.',
+           'ios': 'Sur iPhone : touche le bouton Partager de Safari, puis « Sur l’écran d’accueil ».', 'done': 'MITHQAL est installé.', 'offline': 'Hors connexion : tu vois la dernière version enregistrée.'},
+    'en': {'name': 'MITHQAL: net salary and calculators for Morocco', 'short': 'MITHQAL', 'desc': 'Net salary, employer cost, pay rise, minimum wage: the MITHQAL calculators, even offline.',
+           'btn': 'Install MITHQAL on my phone', 'lede': 'Free, no account, works offline. Until the apps launch on Google Play.',
+           'ios': 'On iPhone: tap Safari’s Share button, then “Add to Home Screen”.', 'done': 'MITHQAL is installed.', 'offline': 'Offline: you’re seeing the last saved version.'},
+    'ar': {'name': 'MITHQAL: الراتب الصافي وحاسبات المغرب', 'short': 'MITHQAL', 'desc': 'الراتب الصافي، تكلفة المشغّل، الزيادة، الحد الأدنى للأجور: حاسبات MITHQAL حتى دون اتصال.',
+           'btn': 'ثبّت MITHQAL على هاتفي', 'lede': 'مجاني، دون حساب، ويعمل دون اتصال. في انتظار إطلاق التطبيقات على Google Play.',
+           'ios': 'على iPhone: اضغط زر المشاركة في Safari، ثم «إضافة إلى الشاشة الرئيسية».', 'done': 'تم تثبيت MITHQAL.', 'offline': 'دون اتصال: تشاهد آخر نسخة محفوظة.'},
+}
+
+PAGES['payslip'] = {
+    'path': '/tools/payslip-check/',
+    'fr': {
+        'title': 'Vérifier sa fiche de paie au Maroc : CNSS, AMO, IR 2026 | MITHQAL',
+        'desc': 'Recopie les lignes de ta fiche de paie : MITHQAL recalcule la CNSS, l’AMO, l’IR et le net selon les règles 2026, et te montre chaque écart avec sa cause probable. Gratuit, rien n’est envoyé.',
+        'h1': 'Ta fiche de paie est-elle juste ?',
+        'lede': 'Recopie quelques lignes de ton bulletin. On recalcule chaque retenue avec les règles 2026 et on te dit ligne par ligne si c’est bon, et sinon pourquoi.',
+        'f': {'base': 'Ce qui est sur ta fiche', 'gross': 'Salaire brut imposable (DH)', 'dep': 'Personnes à charge déclarées', 'lines': 'Les retenues de ta fiche', 'cnss': 'Retenue CNSS (DH)', 'amo': 'Retenue AMO (DH)', 'ir': 'Impôt sur le revenu retenu (DH)', 'net': 'Net à payer (DH)', 'opt': 'Si ta fiche en a (facultatif)', 'cimr': 'Retraite complémentaire CIMR retenue (DH)', 'mut': 'Mutuelle retenue (DH)', 'exempt': 'Indemnités exonérées versées : transport, panier… (DH)', 'example': 'Remplir avec un exemple', 'empty': 'Laisse vide une ligne que tu ne veux pas vérifier.'},
+        'r': {'ok': 'Correct', 'off': 'À vérifier', 'exp': 'attendu', 'got': 'sur ta fiche', 'diff': 'écart', 'allOk': 'Ta fiche de paie est cohérente avec les règles 2026.', 'some': 'ligne(s) à vérifier avec ton service paie.', 'none': 'Entre ton brut imposable et au moins une retenue pour lancer la vérification.', 'print': 'Imprimer ou enregistrer en PDF',
+              'why': {'cnss_hi': 'La retenue CNSS ne peut pas dépasser 268,80 DH : 4,48 % plafonné à 6 000 DH de salaire.', 'cnss_lo': 'Retenue plus basse que prévu : un mois incomplet, une absence ou un brut déclaré plus bas peuvent l’expliquer.', 'amo': 'L’AMO est de 2,26 % de tout le brut, sans plafond. Vérifie que le brut utilisé est le même.', 'ir_hi': 'IR plus élevé que prévu : vérifie que tes personnes à charge sont bien déclarées à ton employeur (50 DH d’impôt en moins par mois et par personne).', 'ir_lo': 'IR plus bas que prévu : ton employeur déduit peut-être une retraite, une mutuelle ou un intérêt de prêt logement que tu n’as pas saisi.', 'net': 'Le net inclut aussi les avances, prêts, oppositions ou indemnités exonérées. Si l’écart correspond à l’un d’eux, c’est normal.'},
+              'tol': 'Tolérance : 1 DH sur la CNSS et l’AMO, 3 DH sur l’IR et le net (arrondis mensuels).'},
+        'h_read': 'Comment lire ta fiche de paie',
+        'read': [['Salaire brut imposable', 'Ton salaire de base plus les primes imposables (ancienneté, rendement, heures supplémentaires). C’est la base de l’AMO et de l’IR.'], ['CNSS', '4,48 % du brut, mais calculée sur 6 000 DH au maximum. La retenue ne dépasse donc jamais 268,80 DH.'], ['AMO', '2,26 % de tout le brut, sans plafond.'], ['Frais professionnels', 'Un abattement de 35 % (25 % au-delà de 6 500 DH brut par mois) qui réduit la base de l’IR. Il n’apparaît pas toujours sur la fiche.'], ['IR', 'Calculé sur le salaire net imposable avec le barème progressif, moins 50 DH par mois et par personne à charge (6 au plus).'], ['Net à payer', 'Le brut moins les retenues, plus les indemnités exonérées, moins les avances et autres retenues.']],
+        'h_err': 'Les erreurs les plus fréquentes',
+        'err': ['Personnes à charge non déclarées à l’employeur : l’IR est trop élevé.', 'CNSS calculée sur tout le salaire au lieu du plafond de 6 000 DH.', 'Prime de panier ou de transport au-dessus du plafond traitée comme exonérée.', 'Ancien barème de l’IR encore utilisé après une loi de finances.'],
+        'faq': [['Mes données sont-elles envoyées ?', 'Non. Le calcul se fait dans ton navigateur. Rien n’est enregistré ni envoyé.'], ['La vérification vaut-elle pour les fonctionnaires ?', 'Non. Elle suit les règles des salariés du privé affiliés à la CNSS.'], ['Que faire si une ligne est fausse ?', 'Imprime ou enregistre le rapport en PDF et montre-le à ton service paie. Le calcul est une estimation informative, pas un avis juridique.']],
+        'src': ['Loi de finances n° 50-25 pour 2026 et Code général des impôts, art. 59 et 73.', 'Taux de cotisation salariale CNSS (4,48 %, plafond 6 000 DH) et AMO (2,26 %). Vérifiés le 27 novembre 2026.'],
+        'src_h': 'Sources et date de vérification',
+    },
+    'en': {
+        'title': 'Check your payslip in Morocco: CNSS, AMO, 2026 income tax | MITHQAL',
+        'desc': 'Copy a few lines from your payslip: MITHQAL recalculates CNSS, AMO, income tax and net pay under the 2026 rules, and shows each gap with its likely cause. Free, nothing is sent.',
+        'h1': 'Is your payslip right?',
+        'lede': 'Copy a few lines from your payslip. We recalculate each deduction under the 2026 rules and tell you, line by line, whether it’s right and if not, why.',
+        'f': {'base': 'What’s on your payslip', 'gross': 'Taxable gross salary (MAD)', 'dep': 'Dependants declared', 'lines': 'The deductions on your payslip', 'cnss': 'CNSS deduction (MAD)', 'amo': 'AMO deduction (MAD)', 'ir': 'Income tax withheld (MAD)', 'net': 'Net pay (MAD)', 'opt': 'If your payslip has them (optional)', 'cimr': 'CIMR supplementary pension deducted (MAD)', 'mut': 'Top-up health insurance deducted (MAD)', 'exempt': 'Tax-free allowances paid: transport, meals… (MAD)', 'example': 'Fill in an example', 'empty': 'Leave a line empty if you don’t want to check it.'},
+        'r': {'ok': 'Correct', 'off': 'Check this', 'exp': 'expected', 'got': 'on your payslip', 'diff': 'gap', 'allOk': 'Your payslip is consistent with the 2026 rules.', 'some': 'line(s) to check with your payroll team.', 'none': 'Enter your taxable gross and at least one deduction to run the check.', 'print': 'Print or save as PDF',
+              'why': {'cnss_hi': 'The CNSS deduction can’t exceed 268.80 MAD: 4.48% capped at 6,000 MAD of salary.', 'cnss_lo': 'Lower than expected: a partial month, an absence or a lower declared gross can explain it.', 'amo': 'AMO is 2.26% of the full gross, with no cap. Check the same gross was used.', 'ir_hi': 'Income tax higher than expected: check your dependants are declared to your employer (50 MAD less tax a month per person).', 'ir_lo': 'Income tax lower than expected: your employer may deduct a pension, health insurance or home-loan interest you didn’t enter.', 'net': 'Net pay also includes advances, loans, garnishments or tax-free allowances. If the gap matches one of them, it’s normal.'},
+              'tol': 'Tolerance: 1 MAD on CNSS and AMO, 3 MAD on income tax and net pay (monthly rounding).'},
+        'h_read': 'How to read your payslip',
+        'read': [['Taxable gross salary', 'Your base salary plus taxable bonuses (seniority, performance, overtime). It’s the base for AMO and income tax.'], ['CNSS', '4.48% of gross pay, calculated on 6,000 MAD at most. So the deduction never exceeds 268.80 MAD.'], ['AMO', '2.26% of the full gross, with no cap.'], ['Professional expenses', 'A 35% allowance (25% above 6,500 MAD gross a month) that reduces the income tax base. It doesn’t always appear on the payslip.'], ['Income tax', 'Calculated on net taxable salary using the progressive brackets, minus 50 MAD a month per dependant (up to 6).'], ['Net pay', 'Gross minus deductions, plus tax-free allowances, minus advances and other deductions.']],
+        'h_err': 'The most common mistakes',
+        'err': ['Dependants not declared to the employer: income tax is too high.', 'CNSS calculated on the whole salary instead of the 6,000 MAD cap.', 'Meal or transport allowance above the cap treated as tax-free.', 'An old income tax scale still in use after a finance law.'],
+        'faq': [['Is my data sent anywhere?', 'No. The calculation runs in your browser. Nothing is saved or sent.'], ['Does the check apply to civil servants?', 'No. It follows the rules for private-sector employees registered with the CNSS.'], ['What if a line is wrong?', 'Print or save the report as a PDF and show it to your payroll team. The calculation is an estimate for information, not legal advice.']],
+        'src': ['Finance Law no. 50-25 for 2026 and General Tax Code, art. 59 and 73.', 'Employee CNSS rate (4.48%, capped at 6,000 MAD) and AMO rate (2.26%). Checked on 27 November 2026.'],
+        'src_h': 'Sources and date checked',
+    },
+    'ar': {
+        'title': 'تحقق من ورقة أجرك في المغرب: الضمان الاجتماعي، التأمين عن المرض، الضريبة 2026 | MITHQAL',
+        'desc': 'انقل بعض أسطر ورقة أجرك: يعيد MITHQAL حساب الضمان الاجتماعي والتأمين عن المرض والضريبة والصافي وفق قواعد 2026، ويُظهر كل فرق مع سببه المحتمل. مجاني، ولا يُرسل أي شيء.',
+        'h1': 'هل ورقة أجرك صحيحة؟',
+        'lede': 'انقل بعض أسطر ورقة أجرك. نعيد حساب كل اقتطاع وفق قواعد 2026 ونخبرك سطرًا بسطر إن كان صحيحًا، وإن لم يكن فلماذا.',
+        'f': {'base': 'ما يوجد في ورقة أجرك', 'gross': 'الأجر الإجمالي الخاضع للضريبة (درهم)', 'dep': 'الأشخاص المتكفل بهم المصرّح بهم', 'lines': 'الاقتطاعات في ورقة أجرك', 'cnss': 'اقتطاع الضمان الاجتماعي (درهم)', 'amo': 'اقتطاع التأمين عن المرض (درهم)', 'ir': 'الضريبة على الدخل المقتطعة (درهم)', 'net': 'الصافي المؤدى (درهم)', 'opt': 'إن وُجدت في ورقتك (اختياري)', 'cimr': 'اقتطاع التقاعد التكميلي CIMR (درهم)', 'mut': 'اقتطاع التأمين التكميلي (درهم)', 'exempt': 'التعويضات المعفاة المدفوعة: النقل، السلة… (درهم)', 'example': 'املأ بمثال', 'empty': 'اترك السطر فارغًا إذا لم ترد التحقق منه.'},
+        'r': {'ok': 'صحيح', 'off': 'يجب التحقق', 'exp': 'المتوقع', 'got': 'في ورقتك', 'diff': 'الفرق', 'allOk': 'ورقة أجرك متوافقة مع قواعد 2026.', 'some': 'سطر (أسطر) يجب التحقق منها مع مصلحة الأجور.', 'none': 'أدخل أجرك الإجمالي الخاضع للضريبة واقتطاعًا واحدًا على الأقل لبدء التحقق.', 'print': 'طباعة أو حفظ بصيغة PDF',
+              'why': {'cnss_hi': 'لا يمكن أن يتجاوز اقتطاع الضمان الاجتماعي 268,80 درهم: 4,48٪ في حدود 6.000 درهم من الأجر.', 'cnss_lo': 'أقل من المتوقع: قد يفسره شهر غير كامل أو غياب أو أجر مصرح به أقل.', 'amo': 'التأمين عن المرض 2,26٪ من كامل الأجر الإجمالي دون سقف. تحقق من أن نفس الأجر الإجمالي استُعمل.', 'ir_hi': 'الضريبة أعلى من المتوقع: تحقق من التصريح بالأشخاص المتكفل بهم لدى مشغّلك (50 درهم أقل من الضريبة شهريًا عن كل شخص).', 'ir_lo': 'الضريبة أقل من المتوقع: قد يخصم مشغّلك تقاعدًا أو تأمينًا تكميليًا أو فوائد قرض سكني لم تُدخلها.', 'net': 'يشمل الصافي أيضًا التسبيقات والقروض والحجوزات أو التعويضات المعفاة. إذا طابق الفرق أحدها فهذا عادي.'},
+              'tol': 'هامش التسامح: درهم واحد للضمان الاجتماعي والتأمين عن المرض، و3 دراهم للضريبة والصافي (تقريب شهري).'},
+        'h_read': 'كيف تقرأ ورقة أجرك',
+        'read': [['الأجر الإجمالي الخاضع للضريبة', 'أجرك الأساسي مع المنح الخاضعة للضريبة (الأقدمية، المردودية، الساعات الإضافية). وهو أساس التأمين عن المرض والضريبة.'], ['الضمان الاجتماعي', '4,48٪ من الأجر الإجمالي، تُحسب على 6.000 درهم كحد أقصى. لذا لا يتجاوز الاقتطاع 268,80 درهم.'], ['التأمين عن المرض', '2,26٪ من كامل الأجر الإجمالي دون سقف.'], ['المصاريف المهنية', 'خصم بنسبة 35٪ (25٪ فوق 6.500 درهم إجمالي شهريًا) يخفض أساس الضريبة. لا يظهر دائمًا في الورقة.'], ['الضريبة على الدخل', 'تُحسب على الأجر الصافي الخاضع للضريبة وفق الجدول التصاعدي، ناقص 50 درهم شهريًا عن كل شخص متكفل به (6 كحد أقصى).'], ['الصافي المؤدى', 'الأجر الإجمالي ناقص الاقتطاعات، زائد التعويضات المعفاة، ناقص التسبيقات والاقتطاعات الأخرى.']],
+        'h_err': 'الأخطاء الأكثر شيوعًا',
+        'err': ['عدم التصريح بالأشخاص المتكفل بهم لدى المشغّل: الضريبة مرتفعة أكثر من اللازم.', 'حساب الضمان الاجتماعي على كامل الأجر بدل سقف 6.000 درهم.', 'منحة السلة أو النقل فوق السقف معاملة كمعفاة.', 'استعمال جدول ضريبي قديم بعد صدور قانون مالية جديد.'],
+        'faq': [['هل تُرسل معطياتي إلى أي جهة؟', 'لا. يتم الحساب في متصفحك. لا يُحفظ أي شيء ولا يُرسل.'], ['هل يصلح التحقق للموظفين العموميين؟', 'لا. يتبع قواعد أجراء القطاع الخاص المنخرطين في الضمان الاجتماعي.'], ['ماذا أفعل إذا كان سطر خاطئًا؟', 'اطبع التقرير أو احفظه بصيغة PDF واعرضه على مصلحة الأجور. الحساب تقدير للإعلام وليس رأيًا قانونيًا.']],
+        'src': ['قانون المالية رقم 50-25 لسنة 2026 والمدونة العامة للضرائب، المادتان 59 و73.', 'نسبة اشتراك الأجير في الضمان الاجتماعي (4,48٪، سقف 6.000 درهم) والتأمين عن المرض (2,26٪). تم التحقق في 27 نونبر 2026.'],
+        'src_h': 'المصادر وتاريخ التحقق',
+    },
+}

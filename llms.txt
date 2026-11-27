@@ -1,0 +1,18 @@
+# MITHQAL
+
+> Free calculators and guides for salaried workers, families and small shopkeepers in Morocco, in French, English and Arabic. Every rate links to its legal source (finance law, CNSS, Labour Code) and the date it was checked. Calculations run in the visitor's browser; nothing is sent.
+
+## Calculators (2026 rules, 2027 draft where relevant)
+- [Net salary, gross to net and net to gross](https://mithqal.ma/fr/tools/salary-calculator/): CNSS 4.48% capped at 6,000 MAD, AMO 2.26%, professional expenses, income tax brackets, dependants, tax-free allowances (meal, transport, representation).
+- [Payslip checker](https://mithqal.ma/fr/tools/payslip-check/): recalculates CNSS, AMO, income tax and net pay from a payslip and explains each gap.
+- [Employer cost](https://mithqal.ma/fr/tools/employer-cost/): employer contributions 21.09% up to 6,000 MAD (8.98% capped, 6.40% + 4.11% + 1.60% uncapped).
+- [Pay rise, net gain](https://mithqal.ma/fr/tools/raise/): includes the 6,500 MAD gross threshold where net pay can drop.
+- [2027 Finance Law gain](https://mithqal.ma/fr/2027/): draft law, not yet enacted.
+- [Overtime](https://mithqal.ma/fr/tools/overtime/), [Severance and job-loss allowance](https://mithqal.ma/fr/tools/severance-job-loss/), [CNSS pension](https://mithqal.ma/fr/tools/cnss-pension/).
+
+## Guides
+- [Minimum wage 2026 (SMIG/SMAG)](https://mithqal.ma/fr/smig-2026/): 17.92 MAD/hour, 3,422.72 MAD gross and 3,192.03 MAD net a month (191 h); SMAG 97.44 MAD/day.
+- [2027 Finance Law: what each salary gains](https://mithqal.ma/fr/blog/loi-de-finances-2027-salaire-net/)
+
+## Languages
+- French: https://mithqal.ma/fr/  English: https://mithqal.ma/en/  Arabic: https://mithqal.ma/ar/

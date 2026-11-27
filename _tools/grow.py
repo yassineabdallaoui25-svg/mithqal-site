@@ -8,7 +8,7 @@ share box on the salary calculator, tools index, sitemap. Idempotent: run it aga
 """
 import glob, html, json, os, re, sys
 sys.path.insert(0, os.path.dirname(__file__))
-from grow_text import LANGS, TOOLS, TOOL_TXT, UI, PAGES
+from grow_text import LANGS, TOOLS, TOOL_TXT, UI, PAGES, WHERE, PWA
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 N = json.load(open(sys.argv[1]))
@@ -214,6 +214,69 @@ def page_beta(l):
     wr(f'{l}{P["path"]}index.html', build(l, P['path'], t['title'], t['desc'], main, [], ['grow.js'], i18n))
 
 
+def page_payslip(l):
+    P = PAGES['payslip']; t = P[l]; f = t['f']
+    def fld(id_, label, ph='', val=''):
+        return f'<label class="fld"><span>{E(label)}</span><input id="{id_}" type="text" inputmode="decimal" autocomplete="off" placeholder="{E(ph)}" value="{val}"></label>'
+    form = (f'<form class="form card" onsubmit="return false"><fieldset class="pg"><legend>{E(f["base"])}</legend>'
+            f'{fld("p-g", f["gross"], "9000")}{dep_select("p-d", f["dep"])}</fieldset>'
+            f'<fieldset class="pg"><legend>{E(f["lines"])}</legend>{fld("p-cnss", f["cnss"])}{fld("p-amo", f["amo"])}{fld("p-ir", f["ir"])}{fld("p-net", f["net"])}'
+            f'<p class="fine" style="margin:0">{E(f["empty"])}</p></fieldset>'
+            f'<details class="extras"><summary>{E(f["opt"])}</summary><div class="form extras-body">{fld("p-cimr", f["cimr"])}{fld("p-mut", f["mut"])}{fld("p-ex", f["exempt"])}</div></details>'
+            f'<button type="button" class="btn ghost" data-example>{E(f["example"])}</button></form>')
+    read = ''.join(f'<dt>{E(a)}</dt><dd>{E(b)}</dd>' for a, b in t['read'])
+    err = ''.join(f'<li>{E(x)}</li>' for x in t['err'])
+    main = (f'<section class="sec hero tight"><div class="wrap" style="display:block"><h1>{E(t["h1"])}</h1><p class="lede">{E(t["lede"])}</p></div></section>\n'
+            f'<section class="sec tight" style="padding-top:0"><div class="wrap"><div class="calc" id="payslip">{form}'
+            f'<div class="res" id="result" aria-live="polite"></div></div>{share_box(l, "payslip")}</div></section>\n'
+            f'<section class="sec paper"><div class="wrap prose"><h2>{E(t["h_read"])}</h2><dl class="read">{read}</dl>'
+            f'<h2>{E(t["h_err"])}</h2><ul>{err}</ul><h2>FAQ</h2>{faq_html(t["faq"])}<h2>{E(t["src_h"])}</h2>{src_list(t["src"])}</div></section>\n' + related(l, 'payslip'))
+    labels = {'cnss': f['cnss'].split(' (')[0], 'amo': f['amo'].split(' (')[0], 'ir': f['ir'].split(' (')[0], 'net': f['net'].split(' (')[0]}
+    i18n = {'numLocale': LOCALE[l], 'currency': CUR[l], 't': {'r': t['r'], 'labels': labels}}
+    url = f'https://mithqal.ma/{l}{P["path"]}'
+    wr(f'{l}{P["path"]}index.html', build(l, P['path'], t['title'], t['desc'], main, [app_ld(t['h1'], url, l), faq_ld(t['faq'])], ENGINE, i18n))
+
+
+def install_box(l, where):
+    w = PWA[l]
+    return (f'<div class="install" data-install data-where="{where}" data-done="{E(w["done"])}" hidden><div><b>{E(w["btn"])}</b><p>{E(w["lede"])}</p>'
+            f'<p class="fine" data-ios hidden>{E(w["ios"])}</p></div><button type="button" class="btn" data-track="pwa_click" data-where="{where}">{E(w["btn"])}</button></div>')
+
+
+def manifests():
+    for l in LANGS:
+        w = PWA[l]
+        sc = [{'name': TOOL_TXT[l][k][0], 'url': f'/{l}{p}?source=pwa', 'icons': [{'src': '/assets/img/icon-192.png', 'sizes': '192x192'}]} for k, p, ic in TOOLS if k in ('salary', 'payslip', 'raise', 'y2027')]
+        m = {'name': w['name'], 'short_name': w['short'], 'description': w['desc'], 'lang': l, 'dir': 'rtl' if l == 'ar' else 'ltr',
+             'start_url': f'/{l}/?source=pwa', 'scope': '/', 'id': f'/{l}/', 'display': 'standalone', 'background_color': '#04191B', 'theme_color': '#04191B',
+             'categories': ['finance', 'productivity'],
+             'icons': [{'src': '/assets/img/icon-192.png', 'sizes': '192x192', 'type': 'image/png'}, {'src': '/assets/img/icon-512.png', 'sizes': '512x512', 'type': 'image/png'},
+                       {'src': '/assets/img/icon-maskable-512.png', 'sizes': '512x512', 'type': 'image/png', 'purpose': 'maskable'}],
+             'shortcuts': sc}
+        wr(f'{l}/manifest.webmanifest', json.dumps(m, ensure_ascii=False, indent=1))
+
+
+def pwa_head_all():
+    for f in glob.glob(os.path.join(ROOT, '*', '**', 'index.html'), recursive=True) + [os.path.join(ROOT, 'salary', 'privacy', 'index.html')]:
+        rel = os.path.relpath(f, ROOT); l = rel.split('/')[0]
+        if l not in LANGS or not os.path.exists(f):
+            continue
+        s = open(f, encoding='utf-8').read(); o = s
+        s = re.sub(r'<!--mq-pwa-->.*?<!--/mq-pwa-->\n?', '', s, flags=re.S)
+        s = s.replace('</head>', f'<!--mq-pwa--><link rel="manifest" href="/{l}/manifest.webmanifest"><link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png"><meta name="mobile-web-app-capable" content="yes"><!--/mq-pwa-->\n</head>', 1)
+        if '/assets/pwa.js' not in s:
+            s = s.replace('</body>', '<script src="/assets/pwa.js" defer></script>\n</body>', 1)
+        # install box: home (under the quick calculator), app pages (after the hero)
+        s = re.sub(r'<!--mq-inst-->.*?<!--/mq-inst-->\n?', '', s, flags=re.S)
+        if rel == f'{l}/index.html':
+            s = s.replace('<!--/mq-qc-->', '<!--/mq-qc-->\n<!--mq-inst-->' + install_box(l, 'home') + '<!--/mq-inst-->', 1)
+        elif rel in (f'{l}/salary/index.html', f'{l}/budget/index.html', f'{l}/qnach/index.html', f'{l}/beta/index.html'):
+            i = s.find('</section>', s.find('<main'))
+            s = s[:i + 10] + f'\n<!--mq-inst--><section class="sec tight inst-sec"><div class="wrap">{install_box(l, rel.split("/")[1])}</div></section><!--/mq-inst-->' + s[i + 10:]
+        if s != o:
+            open(f, 'w', encoding='utf-8').write(s)
+
+
 # ------------------------------------------------------------------ patches on existing pages
 def footer_col(l):
     items = ''.join(f"<li><a href='/{l}{p}'>{E(TOOL_TXT[l][k][0])}</a></li>" for k, p, ic in TOOLS)
@@ -261,6 +324,7 @@ def patch_calc(l):
     # employer-cost line in the result (calc.js reads these keys)
     m = re.search(r'window\.MQ_CALC_I18N=(\{.*?\})</script>', s)
     d = json.loads(m.group(1))
+    d['where'] = WHERE[l]
     d['emp'] = {'a': UI[l]['empLine'], 'b': UI[l]['empLine2'], 'more': UI[l]['empMore'], 'href': f'/{l}/tools/employer-cost/'}
     s = s[:m.start(1)] + json.dumps(d, ensure_ascii=False) + s[m.end(1):]
     if 'assets/grow.js' not in s:
@@ -279,6 +343,7 @@ def patch_home(l):
             f'<div class="qc-out" id="qc-out" aria-live="polite"><span class="k">{E(u["qcNet"])}</span><b class="big num">{money(n["net"], l)}</b></div>'
             f'<div class="row"><a class="btn" id="qc-go" data-base="/{l}/tools/salary-calculator/" href="/{l}/tools/salary-calculator/?b=8000&amp;d=0" data-track="cta_calc" data-where="home_quick">{E(u["qcGo"])}</a>'
             f'<a class="btn ghost" href="#apps">{E(u["qcApps"])}</a></div></form><!--/mq-qc-->')
+    s = re.sub(r'<!--mq-inst-->.*?<!--/mq-inst-->\n?', '', s, flags=re.S)
     s = re.sub(r'\n?<!--mq-qc-->.*?<!--/mq-qc-->\n?', '', s, flags=re.S)
     s = re.sub(r'<p class="hero-ex">.*?</p>\s*<div class="row" style="margin-top:24px">.*?</div>', '', s, count=1, flags=re.S)
     s = s.replace('</p>\n</div>\n<img class="hero-art"', '</p>\n' + form + '\n</div>\n<img class="hero-art"', 1) if form not in s else s
@@ -317,7 +382,7 @@ def patch_tools_index(l):
 def patch_sitemap():
     p = 'sitemap.xml'
     s = rd(p)
-    for k in ('employer', 'raise', 'smig', 'beta'):
+    for k in ('employer', 'raise', 'smig', 'beta', 'payslip'):
         for l in LANGS:
             u = f'https://mithqal.ma/{l}{PAGES[k]["path"]}'
             if f'<loc>{u}</loc>' not in s:
@@ -328,9 +393,11 @@ def patch_sitemap():
 
 if __name__ == '__main__':
     for l in LANGS:
-        page_employer(l); page_raise(l); page_smig(l); page_beta(l)
+        page_employer(l); page_raise(l); page_smig(l); page_beta(l); page_payslip(l)
     patch_all()
     for l in LANGS:
         patch_calc(l); patch_home(l); patch_tools_index(l)
     patch_sitemap()
+    manifests()
+    pwa_head_all()
     print('ok')

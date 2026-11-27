@@ -1,0 +1,77 @@
+{
+ "name": "MITHQAL: الراتب الصافي وحاسبات المغرب",
+ "short_name": "MITHQAL",
+ "description": "الراتب الصافي، تكلفة المشغّل، الزيادة، الحد الأدنى للأجور: حاسبات MITHQAL حتى دون اتصال.",
+ "lang": "ar",
+ "dir": "rtl",
+ "start_url": "/ar/?source=pwa",
+ "scope": "/",
+ "id": "/ar/",
+ "display": "standalone",
+ "background_color": "#04191B",
+ "theme_color": "#04191B",
+ "categories": [
+  "finance",
+  "productivity"
+ ],
+ "icons": [
+  {
+   "src": "/assets/img/icon-192.png",
+   "sizes": "192x192",
+   "type": "image/png"
+  },
+  {
+   "src": "/assets/img/icon-512.png",
+   "sizes": "512x512",
+   "type": "image/png"
+  },
+  {
+   "src": "/assets/img/icon-maskable-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "maskable"
+  }
+ ],
+ "shortcuts": [
+  {
+   "name": "الراتب الصافي (إجمالي ↔ صافي)",
+   "url": "/ar/tools/salary-calculator/?source=pwa",
+   "icons": [
+    {
+     "src": "/assets/img/icon-192.png",
+     "sizes": "192x192"
+    }
+   ]
+  },
+  {
+   "name": "تحقق من ورقة أجرك",
+   "url": "/ar/tools/payslip-check/?source=pwa",
+   "icons": [
+    {
+     "src": "/assets/img/icon-192.png",
+     "sizes": "192x192"
+    }
+   ]
+  },
+  {
+   "name": "ربحك مع قانون المالية 2027",
+   "url": "/ar/2027/?source=pwa",
+   "icons": [
+    {
+     "src": "/assets/img/icon-192.png",
+     "sizes": "192x192"
+    }
+   ]
+  },
+  {
+   "name": "الزيادة في الأجر: كم تبقى صافيًا؟",
+   "url": "/ar/tools/raise/?source=pwa",
+   "icons": [
+    {
+     "src": "/assets/img/icon-192.png",
+     "sizes": "192x192"
+    }
+   ]
+  }
+ ]
+}
