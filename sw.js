@@ -1,6 +1,6 @@
 /* MITHQAL service worker — pages: network first, then cache (works offline once visited);
    static files: cache first, refreshed in the background. Third-party requests (ads) are never touched. */
-const V = 'mq-2026-11-27f';
+const V = 'mq-2026-11-27g';
 const CORE = ['/assets/site.css', '/assets/fonts/readex-pro-latin-wght-normal.woff2', '/assets/img/icon-192.png', '/assets/img/icon-512.png',
   '/assets/engine/rules.js', '/assets/engine/payroll.js', '/assets/engine/jobloss.js', '/assets/engine/retire.js', '/assets/engine/work.js',
   '/assets/calc.js', '/assets/grow.js', '/assets/tools.js', '/assets/track.js', '/assets/search.js', '/assets/pwa.js',
